@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Which Car, Chee Wee?</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Rajdhani:wght@500;600;700&display=swap');
+:root{
+  --bg:#0d1117; --sf:#141b22; --sf2:#1a232c; --sf3:#212c37;
+  --bd:#28323d; --bd2:#394653;
+  --ac:#5DCAA5; --acd:rgba(93,202,165,.14);
+  --am:#EF9F27; --amd:rgba(239,159,39,.14);
+  --rd:#E24B4A; --rdd:rgba(226,75,74,.14);
+  --bl:#85B7EB; --pk:#ED93B1;
+  --tx:#eef2f5; --tx2:#9aa7b3; --tx3:#5f6d7a;
+  --r:14px; --rs:9px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--tx);font-family:'Barlow',sans-serif;min-height:100%}
+body{padding:0 0 60px}
+h1,h2,h3,.disp{font-family:'Rajdhani',sans-serif}
+#wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+/* header */
+#hdr{position:sticky;top:0;z-index:50;background:rgba(13,17,23,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd)}
+#hdrIn{max-width:1080px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Rajdhani';font-weight:700;font-size:20px;letter-spacing:.02em}
+.logo svg{width:26px;height:26px}
+.logo .v{font-size:10px;color:var(--tx3);font-weight:500;align-self:flex-start;margin-top:2px}
+#tabs{display:flex;gap:4px}
+.tab{background:none;border:none;color:var(--tx2);font-family:'Barlow';font-size:14px;font-weight:500;padding:8px 16px;border-radius:9px;cursor:pointer;transition:all .2s}
+.tab:hover{color:var(--tx);background:var(--sf2)}
+.tab.active{color:var(--ac);background:var(--acd)}
+.hbtn{background:var(--sf2);border:1px solid var(--bd);color:var(--tx2);font-size:13px;padding:7px 13px;border-radius:9px;cursor:pointer;transition:all .2s;font-family:'Barlow'}
+.hbtn:hover{border-color:var(--ac);color:var(--ac)}
+/* panels */
+.panel{display:none;animation:fin .35s ease}
+.panel.active{display:block}
+@keyframes fin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px 22px;margin-top:16px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 12px;border-radius:20px;background:var(--sf3);color:var(--tx2)}
+.chip.ok{background:var(--acd);color:var(--ac)}
+.chip.warn{background:var(--amd);color:var(--am)}
+.chip.bad{background:var(--rdd);color:var(--rd)}
+/* sliders */
+.wrow{display:flex;align-items:center;gap:12px;padding:5px 0}
+.wrow label{font-size:13px;color:var(--tx2);width:120px;flex-shrink:0}
+.wrow output{font-family:'Rajdhani';font-weight:600;font-size:15px;color:var(--ac);width:20px;text-align:right}
+input[type=range]{flex:1;appearance:none;-webkit-appearance:none;height:4px;background:var(--bd2);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--ac);border:3px solid var(--sf);box-shadow:0 0 0 1px var(--ac);transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+select,input[type=text],input[type=number]{background:var(--sf2);border:1px solid var(--bd);color:var(--tx);border-radius:var(--rs);padding:8px 12px;font-size:13px;font-family:'Barlow';outline:none;transition:border .2s}
+select:focus,input:focus{border-color:var(--ac)}
+.ctxrow{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)}
+.ctxrow .f{display:flex;flex-direction:column;gap:4px}
+.ctxrow label{font-size:11px;color:var(--tx3);letter-spacing:.05em;text-transform:uppercase}
+/* hero */
+#hero{position:relative;overflow:hidden}
+#hero .grid{display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:start}
+@media(max-width:760px){#hero .grid{grid-template-columns:1fr}}
+.eyebrow{font-size:11px;letter-spacing:.12em;color:var(--ac);font-weight:600}
+#heroName{font-size:34px;font-weight:700;line-height:1.1;margin:4px 0 2px}
+#heroSub{font-size:14px;color:var(--tx2)}
+#heroImgBox{margin:14px 0 6px;height:180px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 100%,rgba(93,202,165,.10),transparent 65%);border-radius:12px;overflow:hidden}
+#heroImgBox img{max-height:170px;max-width:100%;object-fit:contain;filter:drop-shadow(0 14px 20px rgba(0,0,0,.5));animation:carIn .7s cubic-bezier(.22,1,.36,1)}
+#heroImgBox svg{max-height:150px;width:80%;animation:carIn .7s cubic-bezier(.22,1,.36,1)}
+@keyframes carIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+#heroWhy{font-size:14.5px;color:var(--tx2);line-height:1.7;margin-top:10px}
+#heroWhy b{color:var(--tx);font-weight:600}
+#runners{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.ringbox{text-align:center;padding-top:8px}
+.ringbox .lbl{font-size:11px;color:var(--tx3);letter-spacing:.1em;margin-top:4px}
+.statmini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.statmini .s{background:var(--sf2);border-radius:10px;padding:10px 12px}
+.statmini .s .k{font-size:10px;color:var(--tx3);letter-spacing:.06em;text-transform:uppercase}
+.statmini .s .v{font-family:'Rajdhani';font-weight:600;font-size:19px;margin-top:2px}
+/* ranking cards */
+#rankGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:14px}
+.rcard{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:transform .3s cubic-bezier(.22,1,.36,1),border-color .3s,opacity .4s;position:relative}
+.rcard:hover{transform:translateY(-4px);border-color:var(--ac)}
+.rcard.top{border-color:var(--ac)}
+.rcard .pos{position:absolute;top:12px;right:14px;font-family:'Rajdhani';font-weight:700;font-size:18px;color:var(--tx3)}
+.rcard.top .pos{color:var(--ac)}
+.rcard h3{font-size:16px;font-weight:600}
+.rcard .tr{font-size:12px;color:var(--tx3)}
+.rcard .tco{font-family:'Rajdhani';font-weight:600;font-size:20px;margin-top:6px}
+.rcard .mo{font-size:12px;color:var(--tx2)}
+.scorebar{height:5px;background:var(--sf3);border-radius:3px;margin-top:10px;overflow:hidden}
+.scorebar i{display:block;height:100%;background:var(--ac);border-radius:3px;width:0;transition:width 1s cubic-bezier(.22,1,.36,1)}
+.rcard .sc{font-size:11px;color:var(--tx3);margin-top:5px;display:flex;justify-content:space-between}
+/* compare */
+.pinrow{display:flex;gap:8px;flex-wrap:wrap}
+.pin{font-size:12.5px;padding:6px 13px;border-radius:20px;border:1px solid var(--bd);background:var(--sf2);color:var(--tx2);cursor:pointer;transition:all .2s;font-family:'Barlow'}
+.pin:hover{border-color:var(--bd2);color:var(--tx)}
+.pin.on{background:var(--acd);border-color:var(--ac);color:var(--ac)}
+.chartbox{position:relative;height:300px;margin-top:14px}
+#beLbl{font-size:12.5px;color:var(--am);margin-top:8px}
+/* waterfall */
+#wfBox{margin-top:6px}
+.wfrow{display:flex;align-items:center;gap:10px;margin:7px 0}
+.wfrow .k{width:120px;font-size:12.5px;color:var(--tx2);text-align:right;flex-shrink:0}
+.wfrow .barwrap{flex:1;height:22px;background:var(--sf2);border-radius:5px;overflow:hidden}
+.wfrow .bar{height:100%;width:0;border-radius:5px;transition:width .9s cubic-bezier(.22,1,.36,1);background:var(--bl)}
+.wfrow.neg .bar{background:var(--ac)}
+.wfrow .v{width:74px;font-family:'Rajdhani';font-weight:600;font-size:14px;flex-shrink:0}
+/* data table */
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--bd);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--bd);color:var(--tx2);white-space:nowrap}
+td:first-child{color:var(--tx);font-weight:500}
+tr.click{cursor:pointer;transition:background .15s}
+tr.click:hover{background:var(--sf2)}
+.ovDot{color:var(--ac);font-size:15px;line-height:0}
+.tscroll{overflow-x:auto}
+.btn{background:var(--acd);border:1px solid var(--ac);color:var(--ac);font-size:13.5px;font-weight:500;padding:9px 18px;border-radius:var(--rs);cursor:pointer;font-family:'Barlow';transition:all .2s}
+.btn:hover{background:var(--ac);color:#0d1117}
+.btn.ghost{background:none;border-color:var(--bd);color:var(--tx2)}
+.btn.ghost:hover{border-color:var(--bd2);color:var(--tx);background:var(--sf2)}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);padding:18px}
+.ov.open{display:flex}
+.modal{background:var(--sf);border:1px solid var(--bd);border-radius:18px;padding:24px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;animation:mup .3s cubic-bezier(.22,1,.36,1)}
+@keyframes mup{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+.modal h2{font-size:20px;margin-bottom:4px}
+.modal .sub{font-size:13px;color:var(--tx2);margin-bottom:16px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgrid .f,.modal .f{display:flex;flex-direction:column;gap:4px}
+.modal label{font-size:11px;color:var(--tx3);letter-spacing:.05em;text-transform:uppercase}
+.modal input,.modal select{width:100%}
+.mfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+#toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-70px);background:var(--sf3);border:1px solid var(--bd2);border-radius:10px;padding:9px 18px;font-size:13.5px;z-index:600;transition:transform .3s cubic-bezier(.22,1,.36,1);white-space:nowrap;max-width:90vw}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast.ok{border-color:var(--ac);color:var(--ac)}
+#toast.err{border-color:var(--rd);color:var(--rd)}
+.note{font-size:12px;color:var(--tx3);line-height:1.6}
+.srcs{font-size:11.5px;color:var(--tx3);margin-top:10px;line-height:1.7}
+.srcs a{color:var(--bl);text-decoration:none}
+h2.sect{font-size:19px;font-weight:600;display:flex;align-items:center;gap:8px}
+h2.sect .n{font-size:12px;color:var(--ac);background:var(--acd);width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-family:'Barlow';font-weight:600}
+</style>
+</head>
+<body>
+
+<div id="hdr"><div id="hdrIn">
+  <div class="logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#5DCAA5" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="2.5" fill="#5DCAA5" stroke="none"/></svg>
+    Which Car, Chee Wee?<span class="v">v2</span>
+  </div>
+  <div id="tabs">
+    <button class="tab active" data-p="rec" onclick="go('rec')">Recommend</button>
+    <button class="tab" data-p="cmp" onclick="go('cmp')">Compare</button>
+    <button class="tab" data-p="dat" onclick="go('dat')">Data</button>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <span id="dataChip" class="chip">snapshot · 8 Jul 2026</span>
+    <button class="hbtn" onclick="openM('mUnlock')" id="lockBtn">🔒 Unlock</button>
+  </div>
+</div></div>
+
+<div id="wrap">
+
+<!-- ============ RECOMMEND ============ -->
+<div class="panel active" id="p-rec">
+
+  <div class="card">
+    <h2 class="sect"><span class="n">1</span>Your priorities</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2px 28px;margin-top:10px" id="weightRows"></div>
+    <div class="ctxrow">
+      <div class="f"><label>Annual km</label><select id="ctxKm" onchange="recalc()"><option value="10000">10,000</option><option value="15000" selected>15,000</option><option value="20000">20,000</option><option value="25000">25,000</option></select></div>
+      <div class="f"><label>Hold period</label><select id="ctxHold" onchange="recalc()"><option value="10" selected>10 yr (full COE)</option><option value="8">8 yr</option><option value="5">5 yr</option></select></div>
+      <div class="f"><label>Charging $/kWh</label><select id="ctxKwh" onchange="recalc()"><option value="0.62">$0.62 public DC</option><option value="0.48">$0.48 mixed</option><option value="0.32">$0.32 home/AC</option></select></div>
+      <div class="f"><label>Body style filter</label><select id="ctxBody" onchange="recalc()"><option value="all" selected>All</option><option value="suv">SUV / crossover</option><option value="sedan">Sedan / fastback</option></select></div>
+    </div>
+  </div>
+
+  <div class="card" id="hero">
+    <div class="grid">
+      <div>
+        <span class="eyebrow" id="heroEyebrow">BEST MATCH</span>
+        <div id="heroName">—</div>
+        <div id="heroSub">—</div>
+        <div id="heroImgBox"></div>
+        <div id="heroWhy"></div>
+        <div id="runners"></div>
+      </div>
+      <div class="ringbox">
+        <svg viewBox="0 0 130 130" style="width:130px">
+          <circle cx="65" cy="65" r="54" fill="none" stroke="var(--sf3)" stroke-width="9"/>
+          <circle id="ring" cx="65" cy="65" r="54" fill="none" stroke="var(--ac)" stroke-width="9" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="339.3" transform="rotate(-90 65 65)" style="transition:stroke-dashoffset 1.3s cubic-bezier(.22,1,.36,1)"/>
+          <text x="65" y="63" text-anchor="middle" font-size="30" font-weight="600" fill="var(--tx)" font-family="Rajdhani" id="ringNum">0</text>
+          <text x="65" y="82" text-anchor="middle" font-size="9.5" fill="var(--tx3)" letter-spacing="1.5">MATCH SCORE</text>
+        </svg>
+        <div class="statmini" id="heroStats"></div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="sect" style="margin-top:22px"><span class="n">2</span>Full ranking</h2>
+  <div id="rankGrid"></div>
+</div>
+
+<!-- ============ COMPARE ============ -->
+<div class="panel" id="p-cmp">
+  <div class="card">
+    <h2 class="sect">Pin cars to compare <span class="note" style="font-weight:400">(up to 4)</span></h2>
+    <div class="pinrow" id="pinRow" style="margin-top:12px"></div>
+  </div>
+  <div class="card">
+    <h2 class="sect">Cumulative cost over <span id="cmpYrsLbl">10</span> years</h2>
+    <div class="chartbox"><canvas id="cmpChart"></canvas></div>
+    <div id="beLbl"></div>
+  </div>
+  <div class="card">
+    <h2 class="sect">TCO waterfall — <select id="wfSel" onchange="renderWaterfall()" style="font-size:14px"></select></h2>
+    <div id="wfBox"></div>
+  </div>
+</div>
+
+<!-- ============ DATA ============ -->
+<div class="panel" id="p-dat">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <h2 class="sect">Car dataset <span class="chip" id="datasetChip">baked-in snapshot</span></h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn ghost" onclick="openScenarios()">💾 Scenarios</button>
+        <button class="btn" onclick="openAddCar()">＋ Add car</button>
+      </div>
+    </div>
+    <p class="note" style="margin-top:8px">Figures marked ~ are estimates. Click any row to override its costs — edits are marked <span class="ovDot">●</span> and recompute everything instantly. Prices include COE as at early Jul 2026 (Cat B PQP $124,705; VES/EEAI rebates already in list prices).</p>
+    <div class="tscroll"><table id="carTable"></table></div>
+    <div class="srcs" id="srcNotes"></div>
+  </div>
+  <div class="card">
+    <h2 class="sect">Neon connection</h2>
+    <p class="note" style="margin:8px 0 12px">Paste your Neon <b style="color:var(--tx)">Data API URL</b> (Data API page) and <b style="color:var(--tx)">Auth URL</b> (Auth page → Configuration tab). The app fetches a short-lived anonymous token automatically — reads are public; writes require your passphrase. Without these, it runs on the baked-in snapshot + this browser's local storage.</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <input type="text" id="neonUrl" placeholder="Data API URL — https://ep-xxx.apirest.<region>.aws.neon.tech/neondb/rest/v1">
+      <input type="text" id="neonAuth" placeholder="Auth URL — https://ep-xxx.neonauth.<region>.aws.neon.tech/neondb/auth">
+      <div style="display:flex;gap:10px">
+        <button class="btn ghost" onclick="testNeon()">Test</button>
+        <button class="btn" onclick="saveNeon()">Save</button>
+      </div>
+    </div>
+    <p class="note" id="neonStatus" style="margin-top:8px"></p>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- MODALS -->
+<div class="ov" id="mOverride"><div class="modal">
+  <h2 id="ovTitle">Override costs</h2>
+  <p class="sub">Blank = use default. Applies to this car only.</p>
+  <div class="fgrid" id="ovFields"></div>
+  <div class="mfoot">
+    <button class="btn ghost" onclick="resetOverride()">Reset to defaults</button>
+    <button class="btn ghost" onclick="closeM('mOverride')">Cancel</button>
+    <button class="btn" onclick="saveOverride()">Apply</button>
+  </div>
+</div></div>
+
+<div class="ov" id="mAddCar"><div class="modal">
+  <h2>Add a car</h2>
+  <p class="sub">Seeded with sensible EV defaults — change what you know.</p>
+  <div class="fgrid" id="addFields"></div>
+  <div class="mfoot">
+    <button class="btn ghost" onclick="closeM('mAddCar')">Cancel</button>
+    <button class="btn" onclick="saveNewCar()">Add to fleet</button>
+  </div>
+</div></div>
+
+<div class="ov" id="mScen"><div class="modal">
+  <h2>Scenarios</h2>
+  <p class="sub">A scenario saves your weights, context, pins and overrides.</p>
+  <div style="display:flex;gap:10px;margin-bottom:14px">
+    <input type="text" id="scenName" placeholder="e.g. Family-first, home charger" style="flex:1">
+    <button class="btn" onclick="saveScenario()">Save current</button>
+  </div>
+  <div id="scenList"></div>
+  <div class="mfoot"><button class="btn ghost" onclick="closeM('mScen')">Close</button></div>
+</div></div>
+
+<div class="ov" id="mUnlock"><div class="modal">
+  <h2>Unlock saves</h2>
+  <p class="sub">Enter your passphrase to enable cloud writes (scenarios, overrides, added cars) via Neon. Viewers without it get read-only + local-only saves.</p>
+  <input type="text" id="passInput" placeholder="passphrase" autocomplete="off" style="width:100%">
+  <div class="mfoot">
+    <button class="btn ghost" onclick="closeM('mUnlock')">Cancel</button>
+    <button class="btn" onclick="unlock()">Unlock</button>
+  </div>
+</div></div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+/* ================= DATA (snapshot 8 Jul 2026) ================= */
+const MARKET = { asOf:'8 Jul 2026', coeA:103009, coeB:123502, pqpB:124705, dieselL:2.85, parkMo:280 };
+// est=true → figure is an estimate pending quotes. price includes COE + rebates.
+const CARS_BASE = [
+{id:'my',   name:'Tesla Model Y', trim:'RWD 110 (Cat A)', body:'suv',   price:195999, cat:'A', kw:110, range:466, eff:15.6, rtax:1214, ins:2450, maint:600,  resale:52000, rel:8.0, feel:7.5, space:8.5, tech:9.5, brand:8.0, sent:8.1, est:['ins','resale'],
+ photo:'https://commons.wikimedia.org/wiki/Special:FilePath/2023%20Tesla%20Model%20Y%20(facelift).jpg',
+ note:'Cheapest energy+servicing in field; supercharger network; firm ride. EEAI ends 1 Jan 2027.'},
+{id:'m3',   name:'Tesla Model 3', trim:'RWD 110 (Cat A)', body:'sedan', price:179999, cat:'A', kw:110, range:513, eff:13.6, rtax:1214, ins:2350, maint:600,  resale:48000, rel:8.0, feel:8.0, space:6.5, tech:9.5, brand:8.0, sent:8.2, est:['ins','resale'],
+ photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Tesla%20Model%203%20Highland.jpg',
+ note:'Most efficient car here; sedan practicality trade-off vs your F46 habits.'},
+{id:'atto', name:'BYD Atto 3',    trim:'Dynamic (Cat A)', body:'suv',   price:165888, cat:'A', kw:110, range:420, eff:16.0, rtax:1214, ins:2250, maint:800,  resale:38000, rel:7.5, feel:6.0, space:7.5, tech:7.0, brand:6.5, sent:7.2, est:['price','ins','resale'],
+ photo:'https://commons.wikimedia.org/wiki/Special:FilePath/BYD%20Atto%203%20IMG%20001.jpg',
+ note:'Value pick; huge SG service network now; interior quirky, drive is soft.'},
+{id:'seal', name:'BYD Seal',      trim:'Premium (Cat B)', body:'sedan', price:208888, cat:'B', kw:230, range:570, eff:16.5, rtax:2178, ins:2600, maint:800,  resale:46000, rel:7.5, feel:8.5, space:7.0, tech:7.5, brand:6.5, sent:7.9, est:['price','ins','resale'],
+ photo:'https://commons.wikimedia.org/wiki/Special:FilePath/BYD%20Seal%20001.jpg',
+ note:'Best driver’s car of the BYDs; Cat B COE + higher road tax bites.'},
+{id:'sl7',  name:'BYD Sealion 7', trim:'Premium (Cat B)', body:'suv',   price:215888, cat:'B', kw:230, range:482, eff:18.2, rtax:2178, ins:2700, maint:800,  resale:50000, rel:7.5, feel:7.5, space:8.5, tech:7.5, brand:6.5, sent:7.7, est:['price','ins','resale'],
+ photo:'https://commons.wikimedia.org/wiki/Special:FilePath/BYD%20Sealion%2007%20EV%20001.jpg',
+ note:'Plush family SUV, comfiest ride here; thirstier per km than Model Y.'},
+{id:'g6a',  name:'Xpeng G6',      trim:'Air / std RWD (Cat A)', body:'suv', price:209999, cat:'A', kw:190, range:435, eff:17.5, rtax:1850, ins:2550, maint:750, resale:44000, rel:7.0, feel:7.5, space:8.0, tech:8.5, brand:6.0, sent:7.8, est:['price','rtax','ins','resale'],
+ photo:'https://commons.wikimedia.org/wiki/Special:FilePath/XPeng%20G6%20Auto%20Zuerich%202023%201X7A1381.jpg',
+ note:'800V ultra-fast charging; XNGP ADAS strong; young SG dealer network.'},
+{id:'g6p',  name:'Xpeng G6',      trim:'Pro (Cat B)',     body:'suv',   price:218999, cat:'B', kw:210, range:500, eff:17.8, rtax:2050, ins:2650, maint:750,  resale:46000, rel:7.0, feel:7.8, space:8.0, tech:8.8, brand:6.0, sent:7.8, est:['rtax','ins','resale'],
+ photo:'https://commons.wikimedia.org/wiki/Special:FilePath/XPeng%20G6%20Auto%20Zuerich%202023%201X7A1381.jpg',
+ note:'More range + power than Air; check if Cat B premium is worth it for you.'},
+{id:'aiv',  name:'GAC Aion V',    trim:'Premium (Cat A)', body:'suv',   price:166988, cat:'A', kw:150, range:510, eff:16.8, rtax:1500, ins:2350, maint:750,  resale:36000, rel:7.0, feel:6.5, space:8.5, tech:7.0, brand:5.5, sent:7.4, est:['rtax','ins','resale'],
+ photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Aion%20V%20II%20001.jpg',
+ note:'Cheapest entry; cavernous rear; brand young in SG, resale unproven.'},
+{id:'hht',  name:'Hyptec HT',     trim:'Premium (Cat B)', body:'suv',   price:226988, cat:'B', kw:250, range:520, eff:17.2, rtax:2300, ins:2750, maint:800,  resale:48000, rel:7.0, feel:7.0, space:9.0, tech:8.0, brand:5.5, sent:7.3, est:['rtax','ins','resale'],
+ photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Hyptec%20HT%20003.jpg',
+ note:'Lounge-like cabin, gullwing option; heaviest + priciest of the Chinese set.'},
+{id:'keep', name:'Renew 216d COE',trim:'Keep F46 · 10-yr PQP', body:'suv', price:124705, cat:'B', kw:85, range:0, eff:4.6, rtax:1550, ins:1800, maint:2600, resale:4000, rel:5.5, feel:6.0, space:8.0, tech:3.5, brand:6.5, sent:6.0, isKeep:true, est:['maint'],
+ note:'Zero car-shopping cost, known quantity. But: 10-yr-old diesel, rising maintenance, no warranty, worst tech. 5-yr PQP option ≈ $62,353.'}
+];
+const SRC = [
+ ['Motorist COE results','https://www.motorist.sg/coe-results'],
+ ['AAS PQP','https://aas.com.sg/prevailing-quota-premiums-pqp/'],
+ ['Tesla SG','https://www.tesla.com/en_sg'],
+ ['SmartCalculator Tesla cost 2026','https://www.smartcalculator.sg/articles/tesla-singapore-total-cost-2026'],
+ ['OneShift Aion V','https://www.oneshift.com/articles/news/gac-aion-v-ev-suv-is-priced-at-174988-with-coe/'],
+ ['Xpeng SG','https://www.xpeng.com.sg/g6/'],
+ ['Hyptec HT SG','https://aionev.com.sg/models/hyptec-ht'],
+ ['BYD SG price list','https://bydcars.sg']
+];
+const FACTORS = [
+ ['tco','10-yr TCO',9],['rel','Reliability',8],['feel','Driving feel',6],
+ ['space','Space / family',7],['tech','Tech / ADAS',7],['brand','Brand / resale',4]
+];
+
+/* ================= STATE ================= */
+const DB = {
+ get(k){ try{const v=localStorage.getItem('SGCAR_'+k);return v?JSON.parse(v):null}catch{return null} },
+ set(k,v){ try{localStorage.setItem('SGCAR_'+k,JSON.stringify(v))}catch{} }
+};
+const S = {
+ weights: DB.get('weights') || Object.fromEntries(FACTORS.map(f=>[f[0],f[2]])),
+ overrides: DB.get('overrides') || {},
+ customCars: DB.get('customCars') || [],
+ pins: DB.get('pins') || ['my','aiv','sl7','keep'],
+ neonUrl: DB.get('neonUrl') || '',
+ neonAuth: DB.get('neonAuth') || '',
+ anonTok: null, anonTokAt: 0,
+ pass: (()=>{try{return sessionStorage.getItem('SGCAR_pass')||''}catch{return ''}})(),
+ ranked: [], chart:null
+};
+
+/* ================= CORE ================= */
+function cars(){
+ return CARS_BASE.concat(S.customCars).map(c=>{
+   const o=S.overrides[c.id]||{};
+   return Object.assign({},c,o,{_ov:Object.keys(o).length>0});
+ });
+}
+function ctx(){ return {
+ km:+document.getElementById('ctxKm').value,
+ hold:+document.getElementById('ctxHold').value,
+ kwh:+document.getElementById('ctxKwh').value,
+ body:document.getElementById('ctxBody').value };
+}
+function fmtK(n){ return '$'+Math.round(n/1000)+'k'; }
+function fmt(n){ return '$'+Math.round(n).toLocaleString(); }
+
+function tcoOf(c,X){
+ const yrs=X.hold;
+ const energy = c.isKeep
+   ? X.km*c.eff/100*MARKET.dieselL*yrs
+   : X.km*c.eff/100*X.kwh*yrs;
+ const upfront = c.isKeep && yrs<=5 ? 62353 : c.price;
+ const resale = c.resale*(yrs/10>1?1:yrs===10?1:0.55+0.45*yrs/10); // rough: partial COE left
+ const parts = {
+   upfront, insurance:c.ins*yrs, roadTax:c.rtax*yrs, energy,
+   maintenance:c.maint*yrs*(c.isKeep?1.15:1), parking:MARKET.parkMo*12*yrs, resale:-resale
+ };
+ const total=Object.values(parts).reduce((a,b)=>a+b,0);
+ return {total, parts, mo:total/(yrs*12)};
+}
+function scoreAll(){
+ const X=ctx();
+ let list=cars().filter(c=>X.body==='all'||c.body===X.body||c.isKeep);
+ list.forEach(c=>{ c._tco=tcoOf(c,X); });
+ const ts=list.map(c=>c._tco.total), lo=Math.min(...ts), hi=Math.max(...ts);
+ list.forEach(c=>{ c._f={ tco: hi===lo?10:10*(hi-c._tco.total)/(hi-lo), rel:c.rel, feel:c.feel, space:c.space, tech:c.tech, brand:c.brand }; });
+ const wsum=FACTORS.reduce((a,f)=>a+S.weights[f[0]],0)||1;
+ list.forEach(c=>{ c._score=Math.round(FACTORS.reduce((a,f)=>a+S.weights[f[0]]*c._f[f[0]],0)/wsum*10); });
+ list.sort((a,b)=>b._score-a._score);
+ return list;
+}
+
+/* ================= NARRATIVE ================= */
+function narrative(w,list){
+ const X=ctx(), rup=list[1];
+ const avg=k=>list.reduce((a,c)=>a+c._f[k],0)/list.length;
+ const edges=FACTORS.filter(f=>S.weights[f[0]]>0).map(f=>({k:f[0],lbl:f[1],e:(w._f[f[0]]-avg(f[0]))*S.weights[f[0]]})).sort((a,b)=>b.e-a.e);
+ const wins=edges.slice(0,2).map(e=>e.lbl.toLowerCase());
+ const worst=edges[edges.length-1];
+ let flip='';
+ if(rup){
+   const better=FACTORS.filter(f=>rup._f[f[0]]>w._f[f[0]]+0.3).sort((a,b)=>(rup._f[b[0]]-w._f[b[0]])-(rup._f[a[0]]-w._f[a[0]]))[0];
+   if(better) flip=` If you push <b>${better[1].toLowerCase()}</b> weight higher, the <b>${rup.name} ${rup.trim.split(' (')[0]}</b> takes the top spot.`;
+ }
+ const keep=list.find(c=>c.isKeep);
+ const vsKeep = keep&&!w.isKeep ? ` Versus renewing the 216d, it costs <b>${fmtK(Math.abs(w._tco.total-keep._tco.total))} ${w._tco.total>keep._tco.total?'more':'less'}</b> over ${X.hold} years — but you get a new car, full warranty and ${fmtK(w.resale-keep.resale)} more end-of-life value.` : '';
+ return `Wins on your top priorities: <b>${wins.join('</b> and <b>')}</b>. ${w.note} Weakest against the field on <b>${worst.lbl.toLowerCase()}</b>.${vsKeep}${flip}`;
+}
+
+/* ================= RENDER: RECOMMEND ================= */
+function renderWeights(){
+ document.getElementById('weightRows').innerHTML = FACTORS.map(f=>`
+  <div class="wrow"><label>${f[1]}</label>
+   <input type="range" min="0" max="10" step="1" value="${S.weights[f[0]]}" oninput="setW('${f[0]}',this.value)">
+   <output id="w-${f[0]}">${S.weights[f[0]]}</output></div>`).join('');
+}
+function setW(k,v){ S.weights[k]=+v; document.getElementById('w-'+k).textContent=v; DB.set('weights',S.weights); recalc(); }
+
+const SIL = `<svg viewBox="0 0 320 90" role="img" aria-label="car"><path d="M18 66 q6-22 38-26 q24-20 70-20 q54 0 82 20 q54 4 80 16 q14 4 14 9 l-4 6 q-2 4-10 4 l-244 0 q-18 0-22-9z" fill="#1c242c" stroke="#39465F" stroke-width="1.5"/><path d="M66 42 q22-16 62-16 q48 0 72 16z" fill="#0d1117" stroke="#39465F" stroke-width="1"/><circle cx="86" cy="70" r="14" fill="#0b0e11" stroke="#5DCAA5" stroke-width="2.5"/><circle cx="246" cy="70" r="14" fill="#0b0e11" stroke="#5DCAA5" stroke-width="2.5"/></svg>`;
+
+function countUp(el,to,ms){
+ const t0=performance.now();
+ (function step(t){ const p=Math.min(1,(t-t0)/ms); el.textContent=Math.round(to*(1-Math.pow(1-p,3))); if(p<1)requestAnimationFrame(step); })(t0);
+}
+
+function renderHero(list){
+ const w=list[0], X=ctx();
+ document.getElementById('heroEyebrow').textContent=`BEST MATCH · ${X.hold}-YR HOLD · ${X.km.toLocaleString()} KM/YR`;
+ document.getElementById('heroName').textContent=w.name+(w.isKeep?'':' '+w.trim.split(' (')[0]);
+ document.getElementById('heroSub').textContent=`${w.isKeep?'PQP '+fmt(w.price):fmt(w.price)+' w/COE (Cat '+w.cat+')'} · ${X.hold}-yr TCO ${fmtK(w._tco.total)} · ${fmt(w._tco.mo)}/mo effective`;
+ const box=document.getElementById('heroImgBox');
+ box.innerHTML = w.photo ? `<img src="${w.photo}" alt="${w.name}" onerror="this.parentNode.innerHTML=SIL_CLEAN">` : SIL_CLEAN;
+ document.getElementById('heroWhy').innerHTML=narrative(w,list);
+ document.getElementById('runners').innerHTML = list.slice(1,4).map((c,i)=>
+   `<span class="chip ${i===0?'ok':''}">${i+2}. ${c.name} ${c.isKeep?'':c.trim.split(' (')[0]} · ${c._score}</span>`).join('')
+   + (w.est&&w.est.length?`<span class="chip warn">~ ${w.est.join(', ')} estimated — override in Data tab</span>`:'');
+ document.getElementById('ring').style.strokeDashoffset=339.3*(1-w._score/100);
+ countUp(document.getElementById('ringNum'),w._score,1200);
+ const keep=list.find(c=>c.isKeep);
+ document.getElementById('heroStats').innerHTML=`
+  <div class="s"><div class="k">${X.hold}-yr TCO</div><div class="v">${fmtK(w._tco.total)}</div></div>
+  <div class="s"><div class="k">Per month</div><div class="v">${fmt(w._tco.mo)}</div></div>
+  <div class="s"><div class="k">Energy /yr</div><div class="v">${fmt(w._tco.parts.energy/X.hold)}</div></div>
+  <div class="s"><div class="k">vs renew 216d</div><div class="v" style="color:${keep&&w._tco.total<keep._tco.total?'var(--ac)':'var(--am)'}">${keep&&!w.isKeep?(w._tco.total<keep._tco.total?'−':'+')+fmtK(Math.abs(w._tco.total-keep._tco.total)):'—'}</div></div>`;
+}
+
+function renderRank(list){
+ const hi=Math.max(...list.map(c=>c._tco.total));
+ document.getElementById('rankGrid').innerHTML=list.map((c,i)=>`
+  <div class="rcard ${i===0?'top':''}" onclick="pinAndCompare('${c.id}')">
+   <span class="pos">#${i+1}</span>
+   <h3>${c.name}</h3><div class="tr">${c.trim}${c._ov?' <span class="ovDot">●</span>':''}</div>
+   <div class="tco">${fmtK(c._tco.total)}</div>
+   <div class="mo">${fmt(c._tco.mo)}/mo · reliability ${c.rel}/10 · sentiment ${c.sent}</div>
+   <div class="scorebar"><i data-w="${c._score}%"></i></div>
+   <div class="sc"><span>score ${c._score}</span><span>tco bar ${Math.round(c._tco.total/hi*100)}%</span></div>
+  </div>`).join('');
+ requestAnimationFrame(()=>setTimeout(()=>{
+   document.querySelectorAll('.scorebar i').forEach(b=>b.style.width=b.dataset.w);
+ },60));
+}
+
+function recalc(){
+ S.ranked=scoreAll();
+ renderHero(S.ranked); renderRank(S.ranked);
+ renderPins(); renderChart(); renderWfSel(); renderWaterfall(); renderTable();
+}
+
+/* ================= COMPARE ================= */
+function pinAndCompare(id){
+ if(!S.pins.includes(id)){ if(S.pins.length>=4)S.pins.shift(); S.pins.push(id); DB.set('pins',S.pins); }
+ go('cmp');
+}
+function renderPins(){
+ document.getElementById('pinRow').innerHTML=S.ranked.map(c=>
+  `<button class="pin ${S.pins.includes(c.id)?'on':''}" onclick="togglePin('${c.id}')">${c.name} ${c.isKeep?'':c.trim.split(' (')[0]}</button>`).join('');
+}
+function togglePin(id){
+ if(S.pins.includes(id)) S.pins=S.pins.filter(p=>p!==id);
+ else { if(S.pins.length>=4){toast('Max 4 — unpin one first','err');return;} S.pins.push(id); }
+ DB.set('pins',S.pins); renderPins(); renderChart(); renderWfSel(); renderWaterfall();
+}
+const LINEC=['#5DCAA5','#85B7EB','#ED93B1','#EF9F27'];
+function renderChart(){
+ const X=ctx(); document.getElementById('cmpYrsLbl').textContent=X.hold;
+ const pinned=S.ranked.filter(c=>S.pins.includes(c.id));
+ const yrs=[...Array(X.hold+1).keys()];
+ const cum=c=>yrs.map(y=>{
+   const p=c._tco.parts, run=(p.insurance+p.roadTax+p.energy+p.maintenance+p.parking)/X.hold;
+   return Math.round((p.upfront + run*y + (y===X.hold?p.resale:0))/1000);
+ });
+ if(S.chart)S.chart.destroy();
+ S.chart=new Chart(document.getElementById('cmpChart'),{type:'line',
+  data:{labels:yrs.map(y=>'Yr '+y),datasets:pinned.map((c,i)=>({label:c.name+(c.isKeep?'':' '+c.trim.split(' (')[0]),data:cum(c),borderColor:LINEC[i%4],backgroundColor:LINEC[i%4],tension:.3,pointRadius:0,borderWidth:c.isKeep?2:2.5,borderDash:c.isKeep?[6,4]:[]}))},
+  options:{responsive:true,maintainAspectRatio:false,animation:{duration:1200,easing:'easeOutQuart'},
+   plugins:{legend:{labels:{color:'#9aa7b3',boxWidth:12,font:{family:'Barlow',size:12}}},tooltip:{callbacks:{label:c=>c.dataset.label+': $'+c.parsed.y+'k'}}},
+   scales:{x:{ticks:{color:'#5f6d7a',font:{size:10}},grid:{color:'#1a232c'}},y:{ticks:{color:'#5f6d7a',font:{size:10},callback:v=>'$'+v+'k'},grid:{color:'#1a232c'}}}}});
+ // break-even vs keep
+ const keep=pinned.find(c=>c.isKeep), lbl=document.getElementById('beLbl');
+ if(keep&&pinned.length>1){
+  const best=pinned.filter(c=>!c.isKeep).sort((a,b)=>a._tco.total-b._tco.total)[0];
+  const ck=cum(keep), cb=cum(best);
+  let be=-1; for(let y=0;y<=X.hold;y++){ if(cb[y]<=ck[y]){be=y;break} }
+  lbl.innerHTML = be>=0
+   ? `⚡ Break-even: <b style="color:var(--tx)">${best.name}</b> becomes cheaper than renewing the 216d ${be===X.hold?`only at year ${be} (after resale value)`:`from year ${be}`}.`
+   : `⚡ Renewing the 216d stays cheaper than ${best.name} across the full ${X.hold}-year horizon on current assumptions.`;
+ } else lbl.textContent='Pin “Renew 216d COE” to see the break-even analysis.';
+}
+function renderWfSel(){
+ const sel=document.getElementById('wfSel'), cur=sel.value;
+ sel.innerHTML=S.ranked.filter(c=>S.pins.includes(c.id)).map(c=>`<option value="${c.id}">${c.name} ${c.isKeep?'':c.trim.split(' (')[0]}</option>`).join('');
+ if([...sel.options].some(o=>o.value===cur)) sel.value=cur;
+}
+function renderWaterfall(){
+ const id=document.getElementById('wfSel').value;
+ const c=S.ranked.find(x=>x.id===id); const box=document.getElementById('wfBox');
+ if(!c){box.innerHTML='<p class="note">Pin a car above.</p>';return;}
+ const p=c._tco.parts;
+ const rows=[['Upfront (incl COE)',p.upfront],['Insurance',p.insurance],['Road tax',p.roadTax],[c.isKeep?'Diesel':'Charging',p.energy],['Maintenance',p.maintenance],['Parking + ERP',p.parking],['End value (resale/scrap)',p.resale]];
+ const mx=Math.max(...rows.map(r=>Math.abs(r[1])));
+ box.innerHTML=rows.map(r=>`<div class="wfrow ${r[1]<0?'neg':''}"><div class="k">${r[0]}</div><div class="barwrap"><div class="bar" data-w="${Math.abs(r[1])/mx*100}%"></div></div><div class="v">${r[1]<0?'−':''}${fmtK(Math.abs(r[1]))}</div></div>`).join('')
+  + `<div class="wfrow" style="border-top:1px solid var(--bd);padding-top:8px;margin-top:8px"><div class="k" style="color:var(--tx);font-weight:600">Total ${ctx().hold}-yr TCO</div><div class="barwrap" style="background:none"></div><div class="v" style="color:var(--ac);font-size:17px">${fmtK(c._tco.total)}</div></div>`;
+ requestAnimationFrame(()=>setTimeout(()=>box.querySelectorAll('.bar').forEach(b=>b.style.width=b.dataset.w),60));
+}
+
+/* ================= DATA TAB ================= */
+function renderTable(){
+ const X=ctx();
+ document.getElementById('carTable').innerHTML=
+  `<tr><th>Car</th><th>Price w/COE</th><th>Cat</th><th>Range</th><th>Eff.</th><th>Road tax/yr</th><th>Ins/yr</th><th>Maint/yr</th><th>End value</th><th>Rel</th><th>Sent</th><th>${X.hold}-yr TCO</th></tr>`
+  + S.ranked.map(c=>`<tr class="click" onclick="openOverride('${c.id}')">
+   <td>${c.name} <span style="color:var(--tx3)">${c.trim}</span>${c._ov?' <span class="ovDot">●</span>':''}</td>
+   <td>${fmt(c.price)}${(c.est||[]).includes('price')?'~':''}</td><td>${c.cat}</td>
+   <td>${c.range?c.range+' km':'—'}</td><td>${c.eff}${c.isKeep?' L':' kWh'}/100</td>
+   <td>${fmt(c.rtax)}${(c.est||[]).includes('rtax')?'~':''}</td>
+   <td>${fmt(c.ins)}${(c.est||[]).includes('ins')?'~':''}</td>
+   <td>${fmt(c.maint)}${(c.est||[]).includes('maint')?'~':''}</td>
+   <td>${fmt(c.resale)}${(c.est||[]).includes('resale')?'~':''}</td>
+   <td>${c.rel}</td><td>${c.sent}</td><td style="color:var(--tx);font-weight:600">${fmtK(c._tco.total)}</td></tr>`).join('');
+ document.getElementById('srcNotes').innerHTML='Sources: '+SRC.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a>`).join(' · ')+` · COE Cat A ${fmt(MARKET.coeA)} / Cat B ${fmt(MARKET.coeB)} / PQP ${fmt(MARKET.pqpB)} as of ${MARKET.asOf}. Reliability = brand track record + warranty + SG service network (0–10, my research). Sentiment = owner-forum & review tone (sgTalk, Reddit r/singaporeEVs, review sites).`;
+}
+const OVF=[['price','Price w/COE $'],['rtax','Road tax $/yr'],['ins','Insurance $/yr'],['maint','Maintenance $/yr'],['eff','kWh (or L) /100km'],['resale','End value $']];
+let ovId=null;
+function openOverride(id){
+ ovId=id; const c=cars().find(x=>x.id===id); const base=CARS_BASE.concat(S.customCars).find(x=>x.id===id);
+ document.getElementById('ovTitle').textContent='Override — '+c.name+' '+c.trim;
+ document.getElementById('ovFields').innerHTML=OVF.map(f=>`<div class="f"><label>${f[1]} <span style="color:var(--tx3)">(default ${base[f[0]]})</span></label><input type="number" step="any" id="ov-${f[0]}" value="${(S.overrides[id]||{})[f[0]]??''}" placeholder="${base[f[0]]}"></div>`).join('');
+ openM('mOverride');
+}
+function saveOverride(){
+ const o={};
+ OVF.forEach(f=>{ const v=document.getElementById('ov-'+f[0]).value; if(v!=='')o[f[0]]=+v; });
+ if(Object.keys(o).length)S.overrides[ovId]=o; else delete S.overrides[ovId];
+ DB.set('overrides',S.overrides); closeM('mOverride'); recalc(); toast('Overrides applied','ok');
+ neonWrite('save_override',{p_car:ovId,p_data:o});
+}
+function resetOverride(){ delete S.overrides[ovId]; DB.set('overrides',S.overrides); closeM('mOverride'); recalc(); toast('Reset to defaults','ok'); }
+
+const ADDF=[['name','Name','text','New EV'],['trim','Trim','text','Standard'],['price','Price w/COE $','number',180000],['cat','COE Cat','text','A'],['range','Range km','number',450],['eff','kWh/100km','number',16.5],['rtax','Road tax $/yr','number',1500],['ins','Insurance $/yr','number',2500],['maint','Maintenance $/yr','number',750],['resale','End value $','number',40000],['rel','Reliability 0-10','number',7],['feel','Driving feel 0-10','number',7],['space','Space 0-10','number',7.5],['tech','Tech 0-10','number',7.5],['brand','Brand 0-10','number',6],['sent','Sentiment 0-10','number',7.5]];
+function openAddCar(){
+ document.getElementById('addFields').innerHTML=ADDF.map(f=>`<div class="f"><label>${f[1]}</label><input type="${f[2]}" step="any" id="ad-${f[0]}" value="${f[3]}"></div>`).join('');
+ openM('mAddCar');
+}
+function saveNewCar(){
+ const c={id:'c'+Date.now(),body:'suv',photo:'',note:'User-added car.',est:[]};
+ ADDF.forEach(f=>{ const v=document.getElementById('ad-'+f[0]).value; c[f[0]]=f[2]==='number'?+v:v; });
+ S.customCars.push(c); DB.set('customCars',S.customCars);
+ closeM('mAddCar'); recalc(); toast(c.name+' added','ok');
+ neonWrite('save_car',{p_data:c});
+}
+
+/* ================= SCENARIOS ================= */
+function openScenarios(){ renderScenList(); openM('mScen'); }
+function renderScenList(){
+ const sc=DB.get('scenarios')||{};
+ document.getElementById('scenList').innerHTML=Object.keys(sc).length
+  ? Object.entries(sc).map(([n,s])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bd)"><span style="font-size:14px">${n} <span class="note">· ${new Date(s.t).toLocaleDateString()}</span></span><span><button class="btn ghost" style="padding:5px 12px" onclick="loadScenario('${n}')">Load</button> <button class="btn ghost" style="padding:5px 12px;color:var(--rd)" onclick="delScenario('${n}')">✕</button></span></div>`).join('')
+  : '<p class="note">No saved scenarios yet.</p>';
+}
+function saveScenario(){
+ const n=document.getElementById('scenName').value.trim(); if(!n){toast('Name it first','err');return;}
+ const sc=DB.get('scenarios')||{};
+ const payload={weights:S.weights,overrides:S.overrides,pins:S.pins,km:document.getElementById('ctxKm').value,hold:document.getElementById('ctxHold').value,kwh:document.getElementById('ctxKwh').value,t:Date.now()};
+ sc[n]=payload; DB.set('scenarios',sc); renderScenList(); toast('Scenario saved locally','ok');
+ neonWrite('save_scenario',{p_name:n,p_data:payload});
+}
+function loadScenario(n){
+ const s=(DB.get('scenarios')||{})[n]; if(!s)return;
+ S.weights=s.weights; S.overrides=s.overrides||{}; S.pins=s.pins;
+ DB.set('weights',S.weights); DB.set('overrides',S.overrides); DB.set('pins',S.pins);
+ document.getElementById('ctxKm').value=s.km; document.getElementById('ctxHold').value=s.hold; document.getElementById('ctxKwh').value=s.kwh;
+ renderWeights(); recalc(); closeM('mScen'); toast('Loaded “'+n+'”','ok');
+}
+function delScenario(n){ const sc=DB.get('scenarios')||{}; delete sc[n]; DB.set('scenarios',sc); renderScenList(); }
+
+/* ================= NEON ================= */
+async function anonToken(force){
+ if(!S.neonAuth)return null;
+ if(!force && S.anonTok && Date.now()-S.anonTokAt < 10*60*1000) return S.anonTok;
+ const r=await fetch(S.neonAuth.replace(/\/$/,'')+'/token/anonymous');
+ if(!r.ok)throw new Error('anon token '+r.status);
+ let tok; const txt=await r.text();
+ try{ const j=JSON.parse(txt); tok=j.token||j.access_token||j.accessToken||j.jwt; }catch{ tok=txt.trim(); }
+ if(!tok)throw new Error('no token in auth response');
+ S.anonTok=tok; S.anonTokAt=Date.now(); return tok;
+}
+async function neonFetch(path,opts={},retry=true){
+ const tok=await anonToken().catch(()=>null);
+ opts.headers=Object.assign({Accept:'application/json'},opts.headers||{},tok?{Authorization:'Bearer '+tok}:{});
+ const r=await fetch(S.neonUrl+path,opts);
+ if((r.status===401||r.status===400)&&retry&&S.neonAuth){ await anonToken(true); return neonFetch(path,opts,false); }
+ return r;
+}
+async function neonLoad(){
+ if(!S.neonUrl)return;
+ try{
+  const r=await neonFetch('/cars?select=*');
+  if(!r.ok)throw 0;
+  const rows=await r.json();
+  if(rows.length){
+   let latest=0;
+   rows.forEach(row=>{
+    const i=CARS_BASE.findIndex(c=>c.id===row.id);
+    const merged=Object.assign({},row.data||row);
+    if(row.updated_at){const t=Date.parse(row.updated_at);if(t>latest)latest=t;}
+    if(i>=0)CARS_BASE[i]=Object.assign({},CARS_BASE[i],merged); else S.customCars.push(merged);
+   });
+   const upd=latest?new Date(latest).toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'}):'';
+   document.getElementById('dataChip').textContent='live · Neon'+(upd?' · updated '+upd:''); document.getElementById('dataChip').classList.add('ok');
+   document.getElementById('datasetChip').textContent='live from Neon'+(upd?' · '+upd:'');
+   recalc();
+  }
+ }catch(e){ document.getElementById('dataChip').textContent='snapshot (Neon unreachable)'; }
+}
+async function neonWrite(fn,args){
+ if(!S.neonUrl)return;
+ if(!S.pass){ toast('Saved locally — unlock 🔒 to sync to Neon',''); return; }
+ try{
+  const r=await neonFetch('/rpc/'+fn,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({p_pass:S.pass},args))});
+  if(!r.ok)throw new Error(await r.text());
+  toast('Synced to Neon ✓','ok');
+ }catch(e){ toast('Neon write failed — kept locally','err'); }
+}
+function saveNeon(){
+ S.neonUrl=document.getElementById('neonUrl').value.trim().replace(/\/$/,'');
+ S.neonAuth=document.getElementById('neonAuth').value.trim().replace(/\/$/,'');
+ DB.set('neonUrl',S.neonUrl); DB.set('neonAuth',S.neonAuth);
+ S.anonTok=null; toast('Connection saved','ok'); neonLoad();
+}
+async function testNeon(){
+ const st=document.getElementById('neonStatus');
+ S.neonUrl=document.getElementById('neonUrl').value.trim().replace(/\/$/,'');
+ S.neonAuth=document.getElementById('neonAuth').value.trim().replace(/\/$/,'');
+ S.anonTok=null;
+ if(!S.neonUrl){st.textContent='Paste your Data API URL first.';return;}
+ st.textContent='Testing…';
+ let tok=null;
+ if(S.neonAuth){
+  try{ tok=await anonToken(true); st.textContent='✓ Anonymous token OK, checking cars table…'; }
+  catch(e){ st.textContent='✗ Auth URL problem: '+e.message+'. Check the Auth URL (Auth page → Configuration tab) and that Neon Auth is enabled.'; return; }
+ }
+ try{
+  const r=await neonFetch('/cars?select=id&limit=1');
+  if(r.ok){ st.textContent='✓ Connected — cars table reachable. Hit Save.'; }
+  else{ const b=(await r.text()).slice(0,140); st.textContent='✗ Got '+r.status+': '+b+(S.neonAuth?'':' — you likely need the Auth URL too (anonymous requests need a token).'); }
+ }catch(e){ st.textContent='✗ Could not reach Data API endpoint. Check URL / CORS settings.'; }
+}
+function unlock(){
+ const p=document.getElementById('passInput').value.trim(); if(!p)return;
+ S.pass=p; try{sessionStorage.setItem('SGCAR_pass',p)}catch{}
+ document.getElementById('lockBtn').textContent='🔓 Unlocked'; closeM('mUnlock'); toast('Cloud saves enabled for this session','ok');
+}
+
+/* ================= SHELL ================= */
+function go(id){
+ document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+ document.getElementById('p-'+id).classList.add('active');
+ document.querySelector(`.tab[data-p="${id}"]`).classList.add('active');
+ if(id==='cmp')setTimeout(()=>{renderChart();renderWaterfall();},40);
+}
+function openM(id){document.getElementById(id).classList.add('open')}
+function closeM(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeM(o.id)}));
+let _tT;
+function toast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className='show'+(t?' '+t:'');clearTimeout(_tT);_tT=setTimeout(()=>el.className='',2800)}
+const SIL_CLEAN=SIL;
+
+/* ================= INIT ================= */
+renderWeights();
+document.getElementById('neonUrl').value=S.neonUrl;
+document.getElementById('neonAuth').value=S.neonAuth;
+if(S.pass)document.getElementById('lockBtn').textContent='🔓 Unlocked';
+recalc();
+neonLoad();
+</script>
+</body>
+</html>
